@@ -1,0 +1,9 @@
+---
+- hosts: linux:children
+  tasks:
+    - name: Install zabbix_agent
+      apt: name=zabbix-agent state=present
+    - name: Copy Config
+      template: src=../templates/zabbix/zabbix_agentd.conf dest=/etc/zabbix/zabbix_agentd.conf
+    - name: restart zabbix agent
+      command: "/bin/systemctl restart zabbix-agent.service"

@@ -1,0 +1,29 @@
+---
+- hosts: linux
+  tasks:
+    - name: Import elastic search key
+      apt_key: data="{{ lookup('file', '../templates/logstash/GPG-KEY-elasticsearch') }}" state=present
+    - name: Copy Package
+      copy: src="../templates/logstash/logstash-forwarder_0.4.0_amd64.deb" dest="/tmp/logstash-forwarder_0.4.0_amd64.deb"
+    - name: Remove old logstash package if available
+      apt: name=logstash-forwarder state=absent purge=yes
+    - name: Install logstash package
+      apt: deb="/tmp/logstash-forwarder_0.4.0_amd64.deb"
+    - name: create pki directory
+      file: path=/etc/pki/tls/certs state=directory
+    - name: copy certificate
+      copy: src=../templates/logstash/logstash-forwarder.crt dest=/etc/pki/tls/certs/logstash-forwarder.crt
+    - name: copy config
+      copy: src=../templates/logstash/logstash-forwarder dest=/etc/logstash-forwarder
+    - name: refresh systemd services
+      command: "/bin/systemctl daemon-reload"
+    - name: enable logstash service
+      command: "/bin/systemctl enable logstash-forwarder.service"
+    - name: start logstash forwarder
+      command: "/bin/systemctl start logstash-forwarder.service"
+    - name: deploy rsyslog conf
+      copy: src=../templates/logstash/rsyslog-logstash.conf dest=/etc/rsyslog.d/logstash.conf
+    - name: deploy cron syslog conf
+      copy: src=../templates/logstash/rsyslog-cron.conf dest=/etc/rsyslog.d/cron.conf
+    - name: restart rsyslog
+      command: "/etc/init.d/rsyslog restart"

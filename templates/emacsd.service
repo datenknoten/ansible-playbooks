@@ -1,0 +1,12 @@
+[Unit]
+Description=Start the emacs daemon
+After=network.target
+
+[Service]
+Type=forking
+User=root
+WorkingDirectory=/root
+ExecStart=/usr/bin/emacs --daemon
+
+[Install]
+WantedBy=multi-user.target

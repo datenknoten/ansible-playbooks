@@ -1,0 +1,11 @@
+---
+- hosts: linux
+  tasks:
+    - name: write systemd service description to disk
+      copy: src=../templates/emacsd.service dest=/etc/systemd/system/emacsd.service
+    - name: reload systemd service defintions
+      command: "/bin/systemctl daemon-reload"
+    - name: enable systemd service
+      command: "/bin/systemctl enable emacsd.service"
+    - name: start emacsd
+      command: "/bin/systemctl restart emacsd.service"

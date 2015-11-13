@@ -1,0 +1,15 @@
+auto lo
+iface lo inet loopback
+
+# The primary network interface
+auto  eth0
+iface eth0 inet static
+  address   192.168.122.{{ id }}
+  broadcast 192.168.122.255
+  netmask   255.255.255.0
+  gateway   192.168.122.1
+
+iface eth0 inet6 static
+  address 2a01:4f8:200:2265:3:100::{{ id }}
+  netmask 112
+  gateway fe80::5054:ff:fe9f:c3e4

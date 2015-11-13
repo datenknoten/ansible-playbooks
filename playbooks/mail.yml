@@ -1,0 +1,13 @@
+---
+- hosts: mail_clients
+  tasks:
+    - name: Install Postfix
+      apt: name=postfix state=present
+    - name: Copy Config
+      template: src=../templates/mail/main.cf dest=/etc/postfix/main.cf
+    - name: restart postfix
+      command: "/bin/systemctl restart postfix.service"
+    - name: write aliases to the disk
+      copy: src=../templates/mail/aliases dest=/etc/aliases
+    - name: run postalias
+      command: "/usr/sbin/postalias /etc/aliases"

@@ -1,0 +1,12 @@
+---
+- hosts: linux
+  tasks:
+    - name: Distribute debian.sources.list
+      copy: src="../templates/apt/debian.sources.list" dest="/etc/apt/sources.list.d/debian.sources.list"
+    - name: Distribute security.sources.list
+      copy: src="../templates/apt/security.sources.list" dest="/etc/apt/sources.list.d/security.sources.list"
+    - name: Delete sources.list
+      file: path="/etc/apt/sources.list" state="absent"
+    - name: Install cron update
+      cron: name="Update packages" minute="0" hour="5,18" job="/usr/bin/apt-get update -qq"
+ 
