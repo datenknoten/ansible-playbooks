@@ -7,8 +7,10 @@
       copy: src=../templates/network/sysctl.conf dest=/etc/sysctl.conf
     - name: write resolv.conf to the disk
       copy: src=../templates/network/resolv.conf dest=/etc/resolv.conf
+      register: resolv
     - name: write /etc/network/interfaces
       template: src=../templates/network/interfaces dest=/etc/network/interfaces
+      register: interfaces
     - name: restart networking
       shell: "/sbin/ifdown eth0; /sbin/ifup eth0"
-
+      when: resolv.changed or interfaces.changed
